@@ -2,16 +2,13 @@
   'use strict';
 
   var 
-    express = require('express'),
-    app = express(),
+    app = require('express')(),
+    router = require('./router'),
     server;
 
-  app.get('/', function(req, res){
-    res.send('This is my backend sever!');
-  });
-
-  exports.listen = function () {
-    server = app.listen.apply(app, arguments);
+  exports.listen = function (serverPort, databaseUri, mainPath) {
+    router.register(app, databaseUri, mainPath);
+    server = app.listen(serverPort);
   };
 
   exports.close = function (callback) {

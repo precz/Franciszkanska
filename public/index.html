@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Wysyłaczka</title>
+  </head>
+
+<body>
+
+</body>
+
+<script>
+  (function () {
+    function getIp () {
+      return new Promise(function (resolve, reject) {
+        console.log('getting Ip');
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'http://wtfismyip.com/json', true);
+        xhr.onload = function(e) {
+          if (this.status == 200) {
+            resolve(JSON.parse(e.currentTarget.response).YourFuckingIPAddress);
+          }
+        };
+        xhr.send();
+      });
+    }
+
+    function registerIp (ip) {
+      return new Promise(function (resolve, reject) {
+        console.log('setting ip');
+        var xhr = new XMLHttpRequest(),
+            authCode = window.location.search.split('=')[1];
+        xhr.open('GET', '/register/' + authCode + '/' + ip, true);
+        xhr.onload = function(e) {
+          if (this.status == 200) {
+            resolve(JSON.parse(e.currentTarget.response));
+          } else {
+            console.error(e);
+          }
+        };
+        xhr.send();
+      });
+    }
+
+    function getDate() {
+      var currentdate = new Date(); 
+      return currentdate.getDate() + "/" +
+        (currentdate.getMonth()+1)  + "/" +
+        currentdate.getFullYear() + " @ " +
+        currentdate.getHours() + ":" +
+        currentdate.getMinutes() + ":" +
+        currentdate.getSeconds();
+    }
+
+    function run () {
+      getIp().then(registerIp).then(function (response) {
+        console.log('Done: ' + getDate());
+      });
+    }
+
+    run();
+    window.setInterval(run, 60 * 60 * 1000);
+  })();
+</script>
+
+</html>
